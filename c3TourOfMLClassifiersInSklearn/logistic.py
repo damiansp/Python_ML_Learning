@@ -80,6 +80,8 @@ def plot_decision_regions(
                     label = 'test set')
         
 
+# The param C below = 1/lambda for L2 normalization --
+# as C++ -> regularization-- (= higher variance)
 lr = LogisticRegression(C = 1000.0, random_state = 0)
 lr.fit(X_train_std, y_train)
 
@@ -92,3 +94,25 @@ plt.show()
 
 # Predict probabilities
 print lr.predict_proba(X_test_std[0, :]) # prob of each class
+
+
+# Play with C parameter:
+weights, params = [], []
+
+for c in np.arange(-5, 5):
+    lr = LogisticRegression(C = 10 ** c, random_state = 0)
+    lr.fit(X_train_std, y_train)
+    weights.append(lr.coef_[1])
+    params.append(10 ** c)
+
+weights = np.array(weights)
+plt.plot(params, weights[:, 0], label = 'Petal length')
+plt.plot(params, weights[:, 1], linestyle = '--', label = 'Petal width')
+plt.ylabel('Weight coefficient')
+plt.xlabel('C')
+plt.legend(loc = 'upper left')
+plt.xscale('log')
+plt.show()
+
+# i.e., very small C (= very large lambda), drives coeffs to 0
+
