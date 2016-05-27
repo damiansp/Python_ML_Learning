@@ -27,6 +27,8 @@ y_combined = np.hstack((y_train, y_test))
 
 
 knn = KNeighborsClassifier(n_neighbors = 5, p = 2, metric = 'minkowski')
+# minkowski with p = 2 is Euclidean distance
+#                p = 1 is Manhattan distance
 knn.fit(X_train_std, y_train)
 plot_decision_regions(
     X_combined_std, y_combined, classifier = knn, test_idx = range(105, 150))
