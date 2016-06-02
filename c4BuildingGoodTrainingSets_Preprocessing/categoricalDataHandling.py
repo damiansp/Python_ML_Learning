@@ -1,4 +1,4 @@
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 import pandas as pd
 import numpy as np
 
@@ -41,4 +41,26 @@ y_factor = class_LE.inverse_transform(y)
 print '\ny_factor:', y_factor
 
 
-# One-hot coding for cateforical features
+# One-hot coding for categorical features
+X = df[['color', 'size', 'price']].values
+print '\nX:\n', X
+
+color_LE = LabelEncoder()
+X[:, 0] = color_LE.fit_transform(X[:, 0])
+print '\nX:\n', X
+# This is typically NOT what is wanted as now the color variable will be
+# treated like a continuous one.
+# Instead use one-hot coding (using a dummy variable to represent presence or
+# absence for each of the factors present in the variable).
+
+ohe = OneHotEncoder(categorical_features = [0])
+X = ohe.fit_transform(X).toarray()
+print '\nX:\n', X
+
+# Now the first 3 cols of X correspond to the different color values
+
+# Alternately, and more easily:
+print '\ndf:\n', df
+
+dummy_df = pd.get_dummies(df[['price', 'color', 'size']])
+print '\ndummy_df:\n', dummy_df
