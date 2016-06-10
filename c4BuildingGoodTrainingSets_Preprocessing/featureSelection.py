@@ -4,6 +4,7 @@ import pandas as pd
 from itertools import combinations
 from sklearn.base import clone
 from sklearn.cross_validation import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
@@ -154,3 +155,33 @@ knn.fit(X_train_std[:, k5], y_train)
 print('Training acc:', knn.score(X_train_std[:, k5], y_train)) # 96.0
 print('Test acc:', knn.score(X_test_std[:, k5], y_test)) # 98.1 :)
 
+
+
+# Assessing Feature Importance
+# ...based on average impurity increase in a random forest
+# (NOTE: this method will generally select only one among highly correlated
+# features, and others will be downgraded.)
+feat_labels = wine.columns[1:]
+forest = RandomForestClassifier(
+    n_estimators = 10000, random_state = 0, n_jobs = -1)
+
+forest.fit(X_train, y_train)
+importances = forest.feature_importances_
+indices = np.argsort(importances)[::-1]
+
+for f in range(X_train.shape[1]):
+    print('%2d) %-*s %f' %(f + 1, 30, feat_labels[f], importances[indices[f]]))
+
+plt.title('Feature Importance')
+plt.bar(range(X_train.shape[1]),
+        importances[indices],
+        color = 'cyan',
+        align = 'center')
+plt.xticks(range(X_train.shape[1]), feat_labels, rotation = 90)
+plt.xlim([-1, X_train.shape[1]])
+plt.tight_layout()
+plt.show()
+
+# Reduce features based on an importance threshold
+X_selected = forest.transform(X_train, threshold = 0.15)
+print X_selected.shape
