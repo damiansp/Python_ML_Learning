@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.cross_validation import train_test_split
@@ -18,3 +19,21 @@ cov_mat = np.cov(X_train_std.T)
 eigen_vals, eigen_vecs = np.linalg.eig(cov_mat)
 
 print('Eigenvalues\n%s' %eigen_vals)
+
+tot = sum(eigen_vals)
+var_exp = [(i / tot) for i in sorted(eigen_vals, reverse = True)]
+cum_var_exp = np.cumsum(var_exp)
+
+plt.bar(range(1, 14),
+        var_exp,
+        alpha = 0.5,
+        align = 'center',
+        label = 'individual variance explained')
+plt.step(range(1, 14),
+         cum_var_exp,
+         where = 'mid',
+         label = 'cumulative variance explained')
+plt.ylabel('Explained variance')
+plt.xlabel('Principal components')
+plt.legend(loc = 'best')
+plt.show()
