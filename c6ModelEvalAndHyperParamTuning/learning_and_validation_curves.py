@@ -1,13 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.cross_validation import train_test_split
+from sklearn.cross_validation import cross_val_score, train_test_split
 from sklearn.grid_search import GridSearchCV
 from sklearn.learning_curve import learning_curve, validation_curve
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 # Load and preprocess data--------------------------------------------
 url = ('https://archive.ics.uci.edu/ml/machine-learning-databases/' +
@@ -138,4 +139,25 @@ print(gs.best_params_)
 clf = gs.best_estimator_
 clf.fit(X_train, y_train)
 
-print('Test accuracy: %.3f' %clf.score(X_test, y_test))
+print('Test accuracy (SVM): %.3f' %clf.score(X_test, y_test))
+
+
+
+# Nested Cross-Validation---------------------------------------------
+gs = GridSearchCV(estimator = pipe_svc,
+                  param_grid = param_grid,
+                  scoring = 'accuracy',
+                  cv = 5,
+                  n_jobs = -1)
+scores = cross_val_score(gs, X, y, scoring = 'accuracy', cv = 5)
+
+print('CV accuracy (SVM): %.3f +/- %.3f' %(np.mean(scores), np.std(scores)))
+
+# Compare with a tuned tree mod
+gs = GridSearchCV(estimator = DecisionTreeClassifier(random_state = 9),
+                  param_grid = [{ 'max_depth': [1, 2, 3, 4, 5, 6, 7, None] }],
+                  scoring = 'accuracy',
+                  cv = 5)
+scores = cross_val_score(gs, X_train, y_train, scoring = 'accuracy', cv = 5)
+
+print ('CV accuracy (tree): %.3f +/- %.3f' %(np.mean(scores), np.std(scores)))
