@@ -5,6 +5,7 @@ from sklearn.cross_validation import cross_val_score, train_test_split
 from sklearn.grid_search import GridSearchCV
 from sklearn.learning_curve import learning_curve, validation_curve
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.svm import SVC
@@ -161,3 +162,12 @@ gs = GridSearchCV(estimator = DecisionTreeClassifier(random_state = 9),
 scores = cross_val_score(gs, X_train, y_train, scoring = 'accuracy', cv = 5)
 
 print ('CV accuracy (tree): %.3f +/- %.3f' %(np.mean(scores), np.std(scores)))
+
+
+
+# Performance Evaluation Metrics--------------------------------------
+pipe_svc.fit(X_train, y_train)
+
+y_pred = pipe_svc.predict(X_test)
+conf_mat = confusion_matrix(y_true = y_test, y_pred = y_pred)
+print(conf_mat)
