@@ -5,7 +5,8 @@ from sklearn.cross_validation import cross_val_score, train_test_split
 from sklearn.grid_search import GridSearchCV
 from sklearn.learning_curve import learning_curve, validation_curve
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import (
+    confusion_matrix, f1_score, make_scorer, precision_score, recall_score)
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.svm import SVC
@@ -171,3 +172,17 @@ pipe_svc.fit(X_train, y_train)
 y_pred = pipe_svc.predict(X_test)
 conf_mat = confusion_matrix(y_true = y_test, y_pred = y_pred)
 print(conf_mat)
+
+
+
+# Optimizing Precision and Recall of a Classification Model-----------
+print('Precision: %.3f' %precision_score(y_true = y_test, y_pred = y_pred))
+print('Recall:    %.3f' %recall_score(   y_true = y_test, y_pred = y_pred))
+print('F1:        %.3f' %f1_score(       y_true = y_test, y_pred = y_pred))
+
+# Change metrics so label 0 is the "positive" case, and assign metric for
+# validation in grid search
+scorer = make_scorer(f1_score, pos_label = 0)
+gs = GridSearchCV(
+    estimator = pipe_scv, param_grid = param_grid, scoring = scorer, cv = 10)
+# ...
