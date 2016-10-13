@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import interp
-from sklearn.cross_validation import cross_val_score, train_test_split
+from sklearn.cross_validation import (cross_val_score, StratifiedKFold,
+                                      train_test_split)
 from sklearn.grid_search import GridSearchCV
 from sklearn.learning_curve import learning_curve, validation_curve
 from sklearn.linear_model import LogisticRegression
@@ -13,7 +14,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.cross_validation import StratifiedKFold
+
 
 # Load and preprocess data--------------------------------------------
 url = ('https://archive.ics.uci.edu/ml/machine-learning-databases/' +
